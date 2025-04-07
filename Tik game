@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Pontuação TikTok - Times Azul vs Vermelho</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            position: relative;
+        }
+        #gameArea {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            background-color: #222;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .target {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .blueTarget { background-color: blue; }
+        .redTarget { background-color: red; }
+        #scoreboard {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        #giftPanel {
+            margin-top: 20px;
+        }
+        .giftButton {
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .smallGift { background-color: lightblue; }
+        .mediumGift { background-color: orange; }
+        .bigGift { background-color: gold; }
+        .giftNotification {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo de Pontuação TikTok - Azul vs Vermelho</h1>
+    <div id="scoreboard">
+        <div id="blueScore">Azul: 0</div>
+        <div id="redScore">Vermelho: 0</div>
+    </div>
+    <div id="gameArea"></div>
+    <div id="giftPanel">
+        <button class="giftButton smallGift" onclick="receberPresente('pequeno', 'blue')">Presente Azul (+5 pts)</button>
+        <button class="giftButton mediumGift" onclick="receberPresente('médio', 'blue')">Presente Azul (+10 pts)</button>
+        <button class="giftButton bigGift" onclick="receberPresente('grande', 'blue')">Presente Azul (2x pts)</button>
+        <br>
+        <button class="giftButton smallGift" onclick="receberPresente('pequeno', 'red')">Presente Vermelho (+5 pts)</button>
+        <button class="giftButton mediumGift" onclick="receberPresente('médio', 'red')">Presente Vermelho (+10 pts)</button>
+        <button class="giftButton bigGift" onclick="receberPresente('grande', 'red')">Presente Vermelho (2x pts)</button>
+    </div><div id="giftNotification" class="giftNotification"></div>
+
+<script>
+    let blueScore = 0;
+    let redScore = 0;
+    const gameArea = document.getElementById('gameArea');
+    const blueScoreDisplay = document.getElementById('blueScore');
+    const redScoreDisplay = document.getElementById('redScore');
+    const giftNotification = document.getElementById('giftNotification');
+
+    function createTarget() {
+        const target = document.createElement('div');
+        const isBlue = Math.random() < 0.5;
+        target.classList.add('target', isBlue ? 'blueTarget' : 'redTarget');
+        target.style.top = Math.random() * 250 + 'px';
+        target.style.left = Math.random() * 250 + 'px';
+        target.addEventListener('click', () => {
+            if (isBlue) {
+                blueScore += 1;
+                blueScoreDisplay.innerText = 'Azul: ' + blueScore;
+            } else {
+                redScore += 1;
+                redScoreDisplay.innerText = 'Vermelho: ' + redScore;
+            }
+            gameArea.removeChild(target);
+            createTarget();
+        });
+        gameArea.appendChild(target);
+    }
+    
+    createTarget();
+
+    function receberPresente(tipo, team) {
+        let pontos = 0;
+        if (tipo === 'pequeno') pontos = 5;
+        if (tipo === 'médio') pontos = 10;
+        if (tipo === 'grande') pontos = team === 'blue' ? blueScore * 2 : redScore * 2;
+
+        if (team === 'blue') {
+            blueScore += pontos;
+            blueScoreDisplay.innerText = 'Azul: ' + blueScore;
+            exibirNotificacao(`Presente Azul: +${pontos} pontos!`);
+        } else {
+            redScore += pontos;
+            redScoreDisplay.innerText = 'Vermelho: ' + redScore;
+            exibirNotificacao(`Presente Vermelho: +${pontos} pontos!`);
+        }
+    }
+    
+    function exibirNotificacao(mensagem) {
+        giftNotification.innerText = mensagem;
+        giftNotification.style.display = 'block';
+        setTimeout(() => {
+            giftNotification.style.display = 'none';
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
